@@ -1,5 +1,5 @@
 dump.rdb
-all_5_states_undecided_machines_with_global_header
+all_5_states_undecided_machines_with_global_header*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
