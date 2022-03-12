@@ -23,7 +23,7 @@ highlighted_machines = [
     "62537065&s=10000&w=300&ox=0.5",
     "2713328&s=10000&w=300&ox=0.5",
     '"chaotic" [Marxen & Buntrock, 1990];76708232&s=10000&w=300&ox=0.3',
-    '"complex counter" in [Marxen & Buntrock, 1990];10936909&s=5000&w=150&ox=0.5',
+    '"complex counter" [Marxen & Buntrock, 1990];10936909&s=5000&w=150&ox=0.5',
 
 ]
 
