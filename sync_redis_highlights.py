@@ -13,9 +13,10 @@ r.select(REDIS_DB_HIGHLITS)
 r.flushdb()
 
 highlighted_machines = [
-    "BB(5) champion: 47,176,870-halter;mAQACAQEDAQADAQACAQAEAAEFAQEBAQEEAQAGAAEB&s=10000&w=250&ox=0.8&status=halt",
+    "BB(5) champion: 47,176,870-halter;mAQACAQEDAQADAQACAQAEAAEFAQEBAQEEAQAAAAEB&s=10000&w=250&ox=0.8&status=halt",
     "40,899-halter;mAQACAAEDAAADAAAAAQAEAAAFAQEFAAABAAEBAAEF&s=40899&w=500&ox=0.93&status=halt",
     "20,739-halter;mAQACAAEBAAADAQAEAQEDAQEBAQABAQAFAAAAAAAC&s=20739&w=250&ox=0.93&status=halt",
+    "BB(6) champion: ~10^{10^4}-halter;mAQACAAEEAQADAAAGAQEDAQEBAAEFAAAAAQEBAAACAAADAAAF&s=20000&w=500&ox=0.3&status=halt",
     "7410754&s=10000&w=300&ox=0.5",
     "55897188&s=10000&w=300&ox=0.5",
     "43374927&s=10000&w=300&ox=0.65",
