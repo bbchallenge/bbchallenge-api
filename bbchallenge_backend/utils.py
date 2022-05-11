@@ -21,6 +21,32 @@ def get_random_machine_in_db(redis_db):
     return int(machine_id.decode())
 
 
+def get_machine_code(machine_bytes):
+    to_ret = ""
+    for i, b in enumerate(machine_bytes):
+        if i%3 == 0:
+            if machine_bytes[i+2] == 0:
+                to_ret += "-"
+                continue
+            if b == 0:
+                to_ret += "0"
+            else:
+                to_ret += "1"
+        elif i%3 == 1:
+            if machine_bytes[i+1] == 0:
+                to_ret += "-"
+                continue
+            if b == 0:
+                to_ret += "R"
+            else:
+                to_ret += "L"
+        else:
+            if b == 0:
+                to_ret += "-"
+            else:
+                to_ret += chr(ord("A")+b-1)
+    return to_ret
+
 def get_machine_i(i, db_has_header=True, b64=False):
     if not is_valid_machine_index(i):
         raise ValueError(
