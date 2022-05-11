@@ -42,9 +42,8 @@ def random_machine():
 
 @machines_bp.route("/machine/<int:machine_id>")
 def machine_i(machine_id):
-
     try:
-        machine_code = get_machine_code(get_machine_i(machine_id, b64=False))
+        machine_code = get_machine_code(get_machine_i(machine_id))
         to_ret = {"machine_id": machine_id, "machine_code": machine_code}
         to_ret.update(get_machine_i_status(machine_id))
     except ValueError as e:

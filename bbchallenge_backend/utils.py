@@ -1,4 +1,3 @@
-import base64
 from flask import current_app
 
 
