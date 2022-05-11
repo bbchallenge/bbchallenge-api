@@ -47,7 +47,7 @@ def get_machine_code(machine_bytes):
                 to_ret += chr(ord("A")+b-1)
     return to_ret
 
-def get_machine_i(i, db_has_header=True, b64=False):
+def get_machine_i(i, db_has_header=True):
     if not is_valid_machine_index(i):
         raise ValueError(
             "Machine IDs must be number between 0 and 88,664,064 excluded."
@@ -57,17 +57,9 @@ def get_machine_i(i, db_has_header=True, b64=False):
         c = 1 if db_has_header else 0
         f.seek(30 * (i + c))
         bytes_ = f.read(30)
-        if not b64:
-            return bytes_
-        else:
-            the_string = ""
-            for a in bytes_:
-                the_string += chr(a)
-            return (
-                (("m".encode() + base64.urlsafe_b64encode(the_string.encode())))
-                .decode()
-                .rstrip("=")
-            )
+        
+        return bytes_
+       
 
 
 def get_machine_i_status(i):

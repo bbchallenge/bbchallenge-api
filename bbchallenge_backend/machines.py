@@ -44,9 +44,8 @@ def random_machine():
 def machine_i(machine_id):
 
     try:
-        machine = get_machine_i(machine_id, b64=True)
         machine_code = get_machine_code(get_machine_i(machine_id, b64=False))
-        to_ret = {"machine": machine, "machine_id": machine_id, "machine_code": machine_code}
+        to_ret = {"machine_id": machine_id, "machine_code": machine_code}
         to_ret.update(get_machine_i_status(machine_id))
     except ValueError as e:
         return jsonify({"error": e}), 400
