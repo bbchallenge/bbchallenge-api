@@ -5,7 +5,6 @@ DB_SIZE = 88664064
 
 REDIS_DB_UNDECIDED = 0
 REDIS_DB_UNDECIDED_HEURISTICS = 1
-REDIS_DB_HIGHLITS = 2
 
 
 def is_valid_machine_index(machine_id):
@@ -23,16 +22,16 @@ def get_random_machine_in_db(redis_db):
 def get_machine_code(machine_bytes):
     to_ret = ""
     for i, b in enumerate(machine_bytes):
-        if i%3 == 0:
-            if machine_bytes[i+2] == 0:
+        if i % 3 == 0:
+            if machine_bytes[i + 2] == 0:
                 to_ret += "-"
                 continue
             if b == 0:
                 to_ret += "0"
             else:
                 to_ret += "1"
-        elif i%3 == 1:
-            if machine_bytes[i+1] == 0:
+        elif i % 3 == 1:
+            if machine_bytes[i + 1] == 0:
                 to_ret += "-"
                 continue
             if b == 0:
@@ -43,8 +42,9 @@ def get_machine_code(machine_bytes):
             if b == 0:
                 to_ret += "-"
             else:
-                to_ret += chr(ord("A")+b-1)
+                to_ret += chr(ord("A") + b - 1)
     return to_ret
+
 
 def get_machine_i(i, db_has_header=True):
     if not is_valid_machine_index(i):
@@ -56,9 +56,8 @@ def get_machine_i(i, db_has_header=True):
         c = 1 if db_has_header else 0
         f.seek(30 * (i + c))
         bytes_ = f.read(30)
-        
+
         return bytes_
-       
 
 
 def get_machine_i_status(i):
