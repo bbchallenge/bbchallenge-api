@@ -5,6 +5,7 @@ from bbchallenge_backend.utils import (
     get_machine_i,
     get_machine_i_status,
     get_random_machine_in_db,
+    get_machine_code,
     REDIS_DB_UNDECIDED,
     REDIS_DB_UNDECIDED_HEURISTICS,
     DB_SIZE,
@@ -41,10 +42,9 @@ def random_machine():
 
 @machines_bp.route("/machine/<int:machine_id>")
 def machine_i(machine_id):
-
     try:
-        machine = get_machine_i(machine_id, b64=True)
-        to_ret = {"machine": machine, "machine_id": machine_id}
+        machine_code = get_machine_code(get_machine_i(machine_id))
+        to_ret = {"machine_id": machine_id, "machine_code": machine_code}
         to_ret.update(get_machine_i_status(machine_id))
     except ValueError as e:
         return jsonify({"error": e}), 400
