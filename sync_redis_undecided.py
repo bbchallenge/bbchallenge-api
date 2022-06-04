@@ -5,8 +5,7 @@ import argparse
 
 
 REDIS_DB_UNDECIDED = 0
-REDIS_DB_UNDECIDED_HEURISTICS = 1
-INDEXES = ["bb5_undecided_index", "bb5_undecided_index_with_heuristics"]
+INDEXES = ["bbchallenge-undecided-index/bb5_undecided_index"]
 
 r = redis.Redis()
 
@@ -23,6 +22,6 @@ def load_uint32_index_into_redis(src, db):
             r.set(machine_i, 1)
 
 
-for db in [REDIS_DB_UNDECIDED, REDIS_DB_UNDECIDED_HEURISTICS]:
+for db in [REDIS_DB_UNDECIDED]:
     print(f"Loading `{INDEXES[db]}` into REDIS...")
     load_uint32_index_into_redis("indexes/" + INDEXES[db], db)
