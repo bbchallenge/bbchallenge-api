@@ -22,6 +22,8 @@ def machine_decider(machine_id):
     to_ret = {"decider_file": None}
     indexes_base_path = "indexes/bb5_decided_indexes"
     for elem in os.listdir(indexes_base_path):
+        if not "run" in elem:
+            continue
         elem_path = os.path.join(indexes_base_path, elem)
         if os.path.isfile(elem_path):
             if dichoseek(elem_path, machine_id):
