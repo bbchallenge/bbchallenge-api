@@ -1,6 +1,4 @@
-from crypt import methods
-import random
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, current_app
 from bbchallenge_backend.utils import (
     REDIS_DB_UNDECIDED,
     REDIS_DB_UNDECIDED_HEURISTICS,
