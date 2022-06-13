@@ -1,22 +1,16 @@
+import os
 from flask import current_app
 
-
-DB_SIZE = 88664064
-
-REDIS_DB_UNDECIDED = 0
-REDIS_DB_UNDECIDED_HEURISTICS = 1
+# https://github.com/tcosmo/dichoseek
+from dichoseek import dichoseek
 
 
 def is_valid_machine_index(machine_id):
-    return machine_id >= 0 and machine_id < DB_SIZE
+    return machine_id >= 0 and machine_id < current_app.config["DB_SIZE"]
 
 
-def get_random_machine_in_db(redis_db):
-    current_app.r.select(redis_db)
-    machine_id = current_app.r.randomkey()
-    if machine_id is None:
-        raise ValueError(f"no machines in redis DB{redis_db}.")
-    return int(machine_id.decode())
+def get_undecided_db_size():
+    return os.path.getsize(current_app.config["DB_PATH_UNDECIDED"]) // 4
 
 
 def get_machine_code(machine_bytes):
@@ -60,21 +54,17 @@ def get_machine_i(i, db_has_header=True):
         return bytes_
 
 
-def get_machine_i_status(i):
-    if not is_valid_machine_index(i):
+def get_machine_i_status(machine_id):
+    if not is_valid_machine_index(machine_id):
         raise ValueError(
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    current_app.r.select(REDIS_DB_UNDECIDED)
-    is_undecided = current_app.r.exists(i)
+    is_undecided = dichoseek(
+        current_app.config["DB_PATH_UNDECIDED"], machine_id
+    )
 
-    current_app.r.select(REDIS_DB_UNDECIDED_HEURISTICS)
-    is_undecided_with_heuristics = current_app.r.exists(i)
-
-    if is_undecided_with_heuristics:
+    if is_undecided:
         return {"status": "undecided"}
-    elif is_undecided:
-        return {"status": "heuristic"}
-    else:
-        return {"status": "decided"}
+
+    return {"status": "decided"}

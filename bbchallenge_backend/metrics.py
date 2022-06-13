@@ -1,9 +1,5 @@
 from flask import Blueprint, jsonify, current_app
-from bbchallenge_backend.utils import (
-    REDIS_DB_UNDECIDED,
-    REDIS_DB_UNDECIDED_HEURISTICS,
-    DB_SIZE,
-)
+from bbchallenge_backend.utils import get_undecided_db_size
 
 metrics_bp = Blueprint("metrics_bp", __name__)
 
@@ -11,15 +7,11 @@ metrics_bp = Blueprint("metrics_bp", __name__)
 @metrics_bp.route("/metrics")
 def random_machine():
 
-    current_app.r.select(REDIS_DB_UNDECIDED)
-    total_undecided = current_app.r.dbsize()
-    current_app.r.select(REDIS_DB_UNDECIDED_HEURISTICS)
-    total_undecided_with_heuristics = current_app.r.dbsize()
+    total_undecided = get_undecided_db_size()
 
     to_ret = {
-        "total": DB_SIZE,
+        "total": current_app.config["DB_SIZE"],
         "total_undecided": total_undecided,
-        "total_undecided_with_heuristcs": total_undecided_with_heuristics,
     }
 
     return jsonify(to_ret), 200

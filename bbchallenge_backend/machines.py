@@ -1,14 +1,11 @@
 import os
 import random
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from bbchallenge_backend.utils import (
     get_machine_i,
     get_machine_i_status,
-    get_random_machine_in_db,
+    get_undecided_db_size,
     get_machine_code,
-    REDIS_DB_UNDECIDED,
-    REDIS_DB_UNDECIDED_HEURISTICS,
-    DB_SIZE,
 )
 
 # https://github.com/tcosmo/dichoseek
@@ -20,7 +17,7 @@ machines_bp = Blueprint("machines_bp", __name__)
 @machines_bp.route("/machine/<int:machine_id>/decider")
 def machine_decider(machine_id):
     to_ret = {"decider_file": None}
-    indexes_base_path = "indexes/bb5_decided_indexes"
+    indexes_base_path = current_app.config["DB_PATH_DECIDED"]
     for elem in os.listdir(indexes_base_path):
         if not "run" in elem:
             continue
@@ -35,7 +32,6 @@ def machine_decider(machine_id):
 
 @machines_bp.route("/machine/random", methods=["GET", "POST"])
 def random_machine():
-
     req = request.json
 
     if req is None or not "type" in req:
@@ -43,18 +39,13 @@ def random_machine():
             req = {}
         req["type"] = "all_undecided_apply_heuristics"
 
-    if req["type"] == "all":
-        machine_id = random.randint(0, DB_SIZE - 1)
-    elif req["type"] == "all_undecided":
-        try:
-            machine_id = get_random_machine_in_db(REDIS_DB_UNDECIDED)
-        except ValueError as e:
-            return jsonify({"error": e}), 400
+    if req["type"] == "all_undecided":
+        random_machine_id_index = random.randint(0, get_undecided_db_size() - 1)
+        with open(current_app.config["DB_PATH_UNDECIDED"], "rb") as f:
+            f.seek(4 * random_machine_id_index)
+            machine_id = int.from_bytes(f.read(4), byteorder="big")
     else:
-        try:
-            machine_id = get_random_machine_in_db(REDIS_DB_UNDECIDED_HEURISTICS)
-        except ValueError as e:
-            return jsonify({"error": e}), 400
+        machine_id = random.randint(0, current_app.config["DB_SIZE"] - 1)
 
     return machine_i(machine_id)
 

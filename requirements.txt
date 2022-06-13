@@ -12,10 +12,9 @@ packaging==21.3
 pathspec==0.9.0
 platformdirs==2.5.1
 pyparsing==3.0.7
-redis==4.1.4
 six==1.16.0
 tomli==2.0.1
 tqdm==4.63.0
-typing_extensions==4.1.1
+typing-extensions==4.1.1
 Werkzeug==2.0.3
 wrapt==1.13.3

@@ -2,7 +2,6 @@ from os import getenv
 
 from flask import Flask
 from flask_cors import CORS
-from redis import Redis
 
 
 from bbchallenge_backend.ping import ping_bp
@@ -12,15 +11,12 @@ from bbchallenge_backend.metrics import metrics_bp
 
 import os
 
-import redis
-
 
 def create_app(config={}):
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
-    app.r = redis.Redis()
     # if "TESTING" not in config:
     #     config["TESTING"] = False
 
