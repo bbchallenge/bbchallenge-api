@@ -10,7 +10,7 @@ def is_valid_machine_index(machine_id):
 
 
 def get_undecided_db_size():
-    return os.path.getsize(current_app.config["DB_PATH_UNDECIDED"]) // 4
+    return os.stat(current_app.config["DB_PATH_UNDECIDED"]).st_size // 4
 
 
 def get_machine_code(machine_bytes):
