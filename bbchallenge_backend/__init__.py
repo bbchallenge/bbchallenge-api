@@ -9,7 +9,7 @@ from bbchallenge_backend.machines import machines_bp
 from bbchallenge_backend.metrics import metrics_bp
 
 
-import os
+import os, sys
 
 
 def create_app(config={}):
@@ -27,6 +27,7 @@ def create_app(config={}):
             print(
                 f"Cannot create `{secret_key_file_path}` with flask's secret key: {e}. Please refer to https://stackoverflow.com/questions/34902378/where-do-i-get-a-secret-key-for-flask"
             )
+            sys.exit(-1)
 
     app.config.from_pyfile(os.path.join(os.getcwd(), "secret_key.config.py"))
 
