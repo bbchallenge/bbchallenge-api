@@ -14,6 +14,8 @@ Two cases:
 - production: `pip install -r requirements.txt`
 - development: `pip install -r requirements-dev.txt`
 
+### [Action Required] Dichoseek
+
 You will need an extra package, `dichoseek` which is not currently packaged but available at [https://github.com/tcosmo/dichoseek](https://github.com/tcosmo/dichoseek).
 
 One way to install it is:
