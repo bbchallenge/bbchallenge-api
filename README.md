@@ -7,6 +7,7 @@ This code is the backend of [https://bbchallenge.org](https://bbchallenge.org).
 ```sh
 python3.9 -m venv venv
 source venv/bin/activate
+pip install --upgrade pip
 ```
 
 Two cases:
