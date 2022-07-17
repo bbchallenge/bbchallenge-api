@@ -6,6 +6,7 @@ from bbchallenge_backend.utils import (
     get_machine_i_status,
     get_undecided_db_size,
     get_machine_code,
+    _get_map,
 )
 
 # https://github.com/tcosmo/dichoseek
@@ -41,9 +42,9 @@ def random_machine():
 
     if req["type"] == "all_undecided":
         random_machine_id_index = random.randint(0, get_undecided_db_size() - 1)
-        with open(current_app.config["DB_PATH_UNDECIDED"], "rb") as f:
-            f.seek(4 * random_machine_id_index)
-            machine_id = int.from_bytes(f.read(4), byteorder="big")
+        f = _get_map(current_app.config["DB_PATH_UNDECIDED"])
+        f.seek(4 * random_machine_id_index)
+        machine_id = int.from_bytes(f.read(4), byteorder="big")
     else:
         machine_id = random.randint(0, current_app.config["DB_SIZE"] - 1)
 
