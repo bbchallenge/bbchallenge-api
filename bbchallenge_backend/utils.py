@@ -48,6 +48,9 @@ def get_machine_code(machine_bytes):
                 to_ret += "-"
             else:
                 to_ret += chr(ord("A") + b - 1)
+
+        if i % 6 == 5 and i != len(machine_bytes) - 1:
+            to_ret += "_"
     return to_ret
 
 
