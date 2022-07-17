@@ -8,12 +8,16 @@ from dichoseek import dichoseek
 map_files = {}
 map_mmaps = {}
 
+
 def _get_map(path):
     if path not in map_mmaps:
         map_files[path] = open(path, "rb")
-        map_mmaps[path] = mmap.mmap(map_files[path].fileno(), 0, access=mmap.ACCESS_READ)
+        map_mmaps[path] = mmap.mmap(
+            map_files[path].fileno(), 0, access=mmap.ACCESS_READ
+        )
 
     return map_mmaps[path]
+
 
 def is_valid_machine_index(machine_id):
     return machine_id >= 0 and machine_id < current_app.config["DB_SIZE"]
@@ -59,7 +63,17 @@ def get_machine_i(i, db_has_header=True):
     db_map = _get_map(current_app.config["DB_PATH"])
     c = 1 if db_has_header else 0
     offs = 30 * (i + c)
-    return db_map[offs:offs+30]
+    return db_map[offs : offs + 30]
+
+
+def dichoseek_mmap(index_file_path, machine_id):
+    return dichoseek(_get_map(index_file_path), machine_id)
+
+
+def get_nth_machine_id_in_index_file(index_file_path, n):
+    index_file = _get_map(index_file_path)
+    index_file.seek(4 * n)
+    machine_id = int.from_bytes(index_file.read(4), byteorder="big")
 
 
 def get_machine_i_status(machine_id):
@@ -68,8 +82,9 @@ def get_machine_i_status(machine_id):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    db_undecided_map = _get_map(current_app.config["DB_PATH_UNDECIDED"])
-    is_undecided = dichoseek(db_undecided_map, machine_id)
+    is_undecided = dichoseek_mmap(
+        current_app.config["DB_PATH_UNDECIDED"], machine_id
+    )
 
     if is_undecided:
         return {"status": "undecided"}
