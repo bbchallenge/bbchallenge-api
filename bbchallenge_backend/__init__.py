@@ -9,13 +9,27 @@ from bbchallenge_backend.machines import machines_bp
 from bbchallenge_backend.metrics import metrics_bp
 
 
-import os
+import os, sys
 
 
 def create_app(config={}):
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
+
+    secret_key_file_path = os.path.join(os.getcwd(), "secret_key.config.py")
+
+    if not os.path.isfile(secret_key_file_path):
+        try:
+            with open(secret_key_file_path, "w") as f:
+                f.write(f"SECRET_KEY = {os.urandom(12)}")
+        except OSError as e:
+            print(
+                f"Cannot create `{secret_key_file_path}` with flask's secret key: {e}. Please refer to https://stackoverflow.com/questions/34902378/where-do-i-get-a-secret-key-for-flask"
+            )
+            sys.exit(-1)
+
+    app.config.from_pyfile(secret_key_file_path)
 
     # if "TESTING" not in config:
     #     config["TESTING"] = False

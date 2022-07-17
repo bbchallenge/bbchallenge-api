@@ -1,8 +1,19 @@
 import os
+import mmap
 from flask import current_app
 
 # https://github.com/tcosmo/dichoseek
 from dichoseek import dichoseek
+
+map_mmaps = {}
+
+
+def _get_map(path):
+    if path not in map_mmaps:
+        with open(path, "rb") as f:
+            map_mmaps[path] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+
+    return map_mmaps[path]
 
 
 def is_valid_machine_index(machine_id):
@@ -10,7 +21,7 @@ def is_valid_machine_index(machine_id):
 
 
 def get_undecided_db_size():
-    return os.path.getsize(current_app.config["DB_PATH_UNDECIDED"]) // 4
+    return len(_get_map(current_app.config["DB_PATH_UNDECIDED"])) // 4
 
 
 def get_machine_code(machine_bytes):
@@ -46,12 +57,20 @@ def get_machine_i(i, db_has_header=True):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    with open(current_app.config["DB_PATH"], "rb") as f:
-        c = 1 if db_has_header else 0
-        f.seek(30 * (i + c))
-        bytes_ = f.read(30)
+    db_map = _get_map(current_app.config["DB_PATH"])
+    c = 1 if db_has_header else 0
+    offs = 30 * (i + c)
+    return db_map[offs : offs + 30]
 
-        return bytes_
+
+def dichoseek_mmap(index_file_path, machine_id):
+    return dichoseek(_get_map(index_file_path), machine_id)
+
+
+def get_nth_machine_id_in_index_file(index_file_path, n):
+    index_file = _get_map(index_file_path)
+    index_file.seek(4 * n)
+    machine_id = int.from_bytes(index_file.read(4), byteorder="big")
 
 
 def get_machine_i_status(machine_id):
@@ -60,7 +79,7 @@ def get_machine_i_status(machine_id):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    is_undecided = dichoseek(
+    is_undecided = dichoseek_mmap(
         current_app.config["DB_PATH_UNDECIDED"], machine_id
     )
 
