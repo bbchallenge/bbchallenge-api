@@ -30,16 +30,14 @@ def machine_decider(machine_id):
     return jsonify(to_ret), 200
 
 
-@machines_bp.route("/machine/random", methods=["GET", "POST"])
+@machines_bp.route("/machine/random", methods=["GET"])
 def random_machine():
-    req = request.json
+    random_type = request.args.get("type")
 
-    if req is None or not "type" in req:
-        if req is None:
-            req = {}
-        req["type"] = "all_undecided_apply_heuristics"
+    if random_type is None:
+        random_type = "all_undecided"
 
-    if req["type"] == "all_undecided":
+    if random_type == "all_undecided":
         random_machine_id_index = random.randint(0, get_undecided_db_size() - 1)
         machine_id = get_nth_machine_id_in_index_file(
             current_app.config["DB_PATH_UNDECIDED"], random_machine_id_index
