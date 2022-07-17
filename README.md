@@ -39,4 +39,4 @@ ln -s ~/Downloads/dichoseek/dichoseek venv/lib/python3.9/site-packages/dichoseek
 Once you have setup these files, you are good to go with:
 
 - production: `python run_gunicorn.py` (for production deployment you may use a nginx/wsgi/systemd setup on top of gunicorn, [this tutorial can help you](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-20-04))
-- development: `python run.py`
+- development: `python run.py` (or `flask run` but you may have to run `hash -r` before)
