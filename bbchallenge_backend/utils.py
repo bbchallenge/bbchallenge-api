@@ -1,16 +1,22 @@
 import os
+import mmap
 from flask import current_app
 
 # https://github.com/tcosmo/dichoseek
 from dichoseek import dichoseek
 
+db_file = open(current_app.config("DB_PATH"), "rb")
+db_map = mmap.mmap(db_file.fileno(), 0, access=mmap.ACCESS_READ)
+
+db_undecided_file = open(current_app.config("DB_PATH_UNDECIDED"), "rb")
+db_undecided_map = mmap.mmap(db_undecided_file.fileno(), 0, access=mmap.ACCESS_READ)
 
 def is_valid_machine_index(machine_id):
     return machine_id >= 0 and machine_id < current_app.config["DB_SIZE"]
 
 
 def get_undecided_db_size():
-    return os.path.getsize(current_app.config["DB_PATH_UNDECIDED"]) // 4
+    return len(db_undecided_map) // 4
 
 
 def get_machine_code(machine_bytes):
@@ -46,12 +52,9 @@ def get_machine_i(i, db_has_header=True):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    with open(current_app.config["DB_PATH"], "rb") as f:
-        c = 1 if db_has_header else 0
-        f.seek(30 * (i + c))
-        bytes_ = f.read(30)
-
-        return bytes_
+    c = 1 if db_has_header else 0
+    offs = 30 * (i + c)
+    return db_map[offs:offs+30]
 
 
 def get_machine_i_status(machine_id):
@@ -60,9 +63,7 @@ def get_machine_i_status(machine_id):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    is_undecided = dichoseek(
-        current_app.config["DB_PATH_UNDECIDED"], machine_id
-    )
+    is_undecided = dichoseek(db_undecided_map, machine_id)
 
     if is_undecided:
         return {"status": "undecided"}
