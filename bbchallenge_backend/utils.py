@@ -5,13 +5,12 @@ from flask import current_app
 # https://github.com/tcosmo/dichoseek
 from dichoseek import dichoseek
 
-map_files = {}
 map_mmaps = {}
 
 def _get_map(path):
     if path not in map_mmaps:
-        map_files[path] = open(path, "rb")
-        map_mmaps[path] = mmap.mmap(map_files[path].fileno(), 0, access=mmap.ACCESS_READ)
+        with open(path, "rb") as f:
+            map_mmaps[path] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
     return map_mmaps[path]
 
