@@ -24,7 +24,8 @@ def machine_decider(machine_id):
             continue
         elem_path = os.path.join(indexes_base_path, elem)
         if os.path.isfile(elem_path):
-            if dichoseek(elem_path, machine_id):
+            f = _get_map(elem_path)
+            if dichoseek(f, machine_id):
                 to_ret["decider_file"] = elem
                 break
 
