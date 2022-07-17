@@ -29,7 +29,7 @@ def create_app(config={}):
             )
             sys.exit(-1)
 
-    app.config.from_pyfile(os.path.join(os.getcwd(), "secret_key.config.py"))
+    app.config.from_pyfile(secret_key_file_path)
 
     # if "TESTING" not in config:
     #     config["TESTING"] = False
