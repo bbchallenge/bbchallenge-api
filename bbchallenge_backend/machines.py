@@ -46,7 +46,6 @@ def random_machine():
     else:
         machine_id = random.randint(0, current_app.config["DB_SIZE"] - 1)
 
-    print(machine_id)
     return machine_i(machine_id)
 
 

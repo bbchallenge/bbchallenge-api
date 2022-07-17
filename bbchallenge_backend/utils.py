@@ -73,7 +73,7 @@ def dichoseek_mmap(index_file_path, machine_id):
 def get_nth_machine_id_in_index_file(index_file_path, n):
     index_file = _get_map(index_file_path)
     index_file.seek(4 * n)
-    machine_id = int.from_bytes(index_file.read(4), byteorder="big")
+    return int.from_bytes(index_file.read(4), byteorder="big")
 
 
 def get_machine_i_status(machine_id):
