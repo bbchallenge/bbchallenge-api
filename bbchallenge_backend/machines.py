@@ -91,8 +91,8 @@ def get_equivalent_machine_id(machine_code):
         machine_id = get_machine_id_in_db(equivalent_machine)
         to_ret.update({"equivalent_machine_id": machine_id})
     except TMNormalizationError as e:
-        error = e
-        to_ret.update({"error": e})
+        error = str(e)
+        to_ret.update({"error": str(e)})
     return (
         jsonify(to_ret),
         200 if error is None else 400,
