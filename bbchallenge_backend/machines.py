@@ -88,8 +88,9 @@ def get_equivalent_machine_id(machine_code):
     try:
         equivalent_machine = normalize_machine(machine_code)
         to_ret.update({"equivalent_machine_code": equivalent_machine})
-        machine_id = get_machine_id_in_db(equivalent_machine)
-        to_ret.update({"equivalent_machine_id": machine_id})
+        if equivalent_machine is not None:
+            machine_id = get_machine_id_in_db(equivalent_machine)
+            to_ret.update({"equivalent_machine_id": machine_id})
     except TMNormalizationError as e:
         error = str(e)
         to_ret.update({"error": str(e)})
