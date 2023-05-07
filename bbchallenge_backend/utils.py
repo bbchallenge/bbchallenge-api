@@ -1,9 +1,8 @@
-import os
 import mmap
 from flask import current_app
 
 # https://github.com/tcosmo/dichoseek
-from dichoseek import dichoseek
+from dichoseek import dichoseek, dichoseek_index
 
 map_mmaps = {}
 
@@ -22,6 +21,29 @@ def is_valid_machine_index(machine_id):
 
 def get_undecided_db_size():
     return len(_get_map(current_app.config["DB_PATH_UNDECIDED"])) // 4
+
+
+def get_machine_bytes_from_code(machine_code: str) -> bytes:
+    to_bytes = []
+    machine_code = machine_code.replace("_", "")
+    for i, e in enumerate(machine_code):
+        if i % 3 == 0:
+            if e == "-":
+                to_bytes.append(0)
+            else:
+                to_bytes.append(0 if e == "0" else 1)
+        elif i % 3 == 1:
+            if e == "-":
+                to_bytes.append(0)
+            else:
+                to_bytes.append(0 if e == "R" else 1)
+        else:
+            if e == "-":
+                to_bytes.append(0)
+            else:
+                to_bytes.append(1 + ord(e) - ord("A"))
+
+    return bytes(to_bytes)
 
 
 def get_machine_code(machine_bytes):
@@ -82,11 +104,35 @@ def get_machine_i_status(machine_id):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    is_undecided = dichoseek_mmap(
-        current_app.config["DB_PATH_UNDECIDED"], machine_id
-    )
+    is_undecided = dichoseek_mmap(current_app.config["DB_PATH_UNDECIDED"], machine_id)
 
     if is_undecided:
         return {"status": "undecided"}
 
     return {"status": "decided"}
+
+
+def get_machine_id_in_db(machine_code: str) -> int:
+    DB_END_TIME = 14322029
+    machine_bytes = get_machine_bytes_from_code(machine_code)
+    db_map = _get_map(current_app.config["DB_PATH"])
+    found_id = dichoseek_index(
+        db_map,
+        machine_bytes,
+        block_size=30,
+        block_interpretation_function=lambda x: x,
+        begin_at_byte=30,
+        end_at_byte=(DB_END_TIME + 1) * 30,
+    )
+    if found_id != -1:
+        return found_id
+    found_id = dichoseek_index(
+        db_map,
+        machine_bytes,
+        block_size=30,
+        block_interpretation_function=lambda x: x,
+        begin_at_byte=30 + DB_END_TIME * 30,
+    )
+    if found_id == -1:
+        return -1
+    return DB_END_TIME + found_id

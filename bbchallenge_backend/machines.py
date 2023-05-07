@@ -6,8 +6,13 @@ from bbchallenge_backend.utils import (
     get_machine_i_status,
     get_undecided_db_size,
     get_machine_code,
+    get_machine_id_in_db,
     get_nth_machine_id_in_index_file,
     dichoseek_mmap,
+)
+from bbchallenge_backend.machine_normalizer import (
+    normalize_machine,
+    TMNormalizationError,
 )
 
 
@@ -59,3 +64,36 @@ def machine_i(machine_id):
         return jsonify({"error": e}), 400
 
     return jsonify(to_ret), 200
+
+
+@machines_bp.route("/machine/<machine_code>")
+def get_machine_id(machine_code):
+    machine_id = get_machine_id_in_db(machine_code)
+    to_ret = {"machine_id": machine_id, "machine_code": machine_code}
+    if machine_id != -1:
+        to_ret.update(get_machine_i_status(machine_id))
+    return (
+        jsonify(to_ret),
+        200 if machine_id != -1 else 404,
+    )
+
+
+@machines_bp.route("/machine/equivalent/<machine_code>")
+def get_equivalent_machine_id(machine_code):
+    """Get the ID of the db machine that is equivalent to the one given,
+    if it exists.
+    """
+    error = None
+    to_ret = {"machine_code": machine_code}
+    try:
+        equivalent_machine = normalize_machine(machine_code)
+        to_ret.update({"equivalent_machine_code": equivalent_machine})
+        machine_id = get_machine_id_in_db(equivalent_machine)
+        to_ret.update({"equivalent_machine_id": machine_id})
+    except TMNormalizationError as e:
+        error = e
+        to_ret.update({"error": e})
+    return (
+        jsonify(to_ret),
+        200 if error is None else 400,
+    )
