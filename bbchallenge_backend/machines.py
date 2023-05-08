@@ -70,11 +70,11 @@ def machine_i(machine_id):
 def get_machine_id(machine_code):
     machine_id = get_machine_id_in_db(machine_code)
     to_ret = {"machine_id": machine_id, "machine_code": machine_code}
-    if machine_id != -1:
+    if machine_id is not None:
         to_ret.update(get_machine_i_status(machine_id))
     return (
         jsonify(to_ret),
-        200 if machine_id != -1 else 404,
+        200 if machine_id is not None else 404,
     )
 
 
@@ -91,6 +91,8 @@ def get_equivalent_machine_id(machine_code):
         if equivalent_machine is not None:
             machine_id = get_machine_id_in_db(equivalent_machine)
             to_ret.update({"equivalent_machine_id": machine_id})
+            if machine_id is not None:
+                to_ret.update(get_machine_i_status(machine_id))
     except TMNormalizationError as e:
         error = str(e)
         to_ret.update({"error": str(e)})

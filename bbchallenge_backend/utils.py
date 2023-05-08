@@ -1,4 +1,5 @@
 import mmap
+from typing import Union
 from flask import current_app
 
 # https://github.com/tcosmo/dichoseek
@@ -112,7 +113,7 @@ def get_machine_i_status(machine_id):
     return {"status": "decided"}
 
 
-def get_machine_id_in_db(machine_code: str) -> int:
+def get_machine_id_in_db(machine_code: str) -> Union[int, None]:
     DB_END_TIME = 14322029
     machine_bytes = get_machine_bytes_from_code(machine_code)
     db_map = _get_map(current_app.config["DB_PATH"])
@@ -124,7 +125,7 @@ def get_machine_id_in_db(machine_code: str) -> int:
         begin_at_byte=30,
         end_at_byte=(DB_END_TIME + 1) * 30,
     )
-    if found_id != -1:
+    if found_id is not None:
         return found_id
     found_id = dichoseek_index(
         db_map,
@@ -133,6 +134,6 @@ def get_machine_id_in_db(machine_code: str) -> int:
         block_interpretation_function=lambda x: x,
         begin_at_byte=30 + DB_END_TIME * 30,
     )
-    if found_id == -1:
-        return -1
+    if found_id is None:
+        return None
     return DB_END_TIME + found_id
