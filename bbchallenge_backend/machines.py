@@ -67,7 +67,7 @@ def machine_i(machine_id):
 
 
 @machines_bp.route("/machine/<machine_code>")
-def get_machine_id(machine_code):
+def get_machine_from_code(machine_code):
     machine_id = get_machine_id_in_db(machine_code)
     to_ret = {"machine_id": machine_id, "machine_code": machine_code}
     if machine_id is not None:
@@ -79,7 +79,7 @@ def get_machine_id(machine_code):
 
 
 @machines_bp.route("/machine/equivalent/<machine_code>")
-def get_equivalent_machine_id(machine_code):
+def get_equivalent_machine(machine_code):
     """Get the ID of the db machine that is equivalent to the one given,
     if it exists.
     """
