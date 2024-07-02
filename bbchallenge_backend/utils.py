@@ -31,6 +31,15 @@ def get_undecided_db_size():
     return len(mmaped_file) // 4
 
 
+# As of July 2nd 2024 there are no more BB(5) holdouts
+# but we let the user browse the final list that we had before July 2nd 2024
+def get_final_bbchallenge_holdouts_size():
+    mmaped_file = _get_map(current_app.config["DB_PATH_FINAL_BBCHALLENGE_HOLDOUTS"])
+    if mmaped_file is None:
+        return 0
+    return len(mmaped_file) // 4
+
+
 def get_machine_bytes_from_code(machine_code: str) -> bytes:
     to_bytes = []
     machine_code = machine_code.replace("_", "")
