@@ -121,10 +121,10 @@ def get_machine_i_status(machine_id):
             "Machine IDs must be number between 0 and 88,664,064 excluded."
         )
 
-    is_undecided = dichoseek_mmap(current_app.config["DB_PATH_UNDECIDED"], machine_id)
+    # is_undecided = dichoseek_mmap(current_app.config["DB_PATH_UNDECIDED"], machine_id)
 
-    if is_undecided:
-        return {"status": "undecided"}
+    # if is_undecided:
+    #     return {"status": "undecided"}
 
     return {"status": "decided"}
 
