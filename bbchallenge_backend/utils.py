@@ -1,3 +1,4 @@
+import os
 import mmap
 from typing import Union
 from flask import current_app
@@ -10,8 +11,11 @@ map_mmaps = {}
 
 def _get_map(path):
     if path not in map_mmaps:
-        with open(path, "rb") as f:
-            map_mmaps[path] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        if os.stat(path).st_size == 0:
+            map_mmaps[path] = None
+        else:
+            with open(path, "rb") as f:
+                map_mmaps[path] = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
     return map_mmaps[path]
 
@@ -21,7 +25,10 @@ def is_valid_machine_index(machine_id):
 
 
 def get_undecided_db_size():
-    return len(_get_map(current_app.config["DB_PATH_UNDECIDED"])) // 4
+    mmaped_file = _get_map(current_app.config["DB_PATH_UNDECIDED"])
+    if mmaped_file is None:
+        return 0
+    return len(mmaped_file) // 4
 
 
 def get_machine_bytes_from_code(machine_code: str) -> bytes:
